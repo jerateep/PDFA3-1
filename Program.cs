@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
@@ -11,7 +12,7 @@ namespace PDFA3
             string pdfPath = @"C:\Users\jerateeps\Desktop\A3TEST.PDF";
             byte[] array = File.ReadAllBytes(pdfPath);
             //var LstFile = ListEmbeddedFileNames(pdfPath);
-            var LstFile2 = GetEmbeddedFileData(pdfPath, "A3TEST");
+            List<FBWiFi_XMLBody> LstFile = GetEmbeddedFileData(pdfPath, "A3TEST");
         }
 
         public static string[] ListEmbeddedFileNames(string pdfFileName)
@@ -45,8 +46,9 @@ namespace PDFA3
             }
             return fileNames;
         }
-        public static byte[] GetEmbeddedFileData(string pdfFileName, string embeddedFileName)
+        public static List<FBWiFi_XMLBody> GetEmbeddedFileData(string pdfFileName, string embeddedFileName)
         {
+            List<FBWiFi_XMLBody> objResult = new List<FBWiFi_XMLBody>();
             byte[] attachedFileBytes = null;
             var reader = new iTextSharp.text.pdf.PdfReader(pdfFileName);
             if (reader != null)
@@ -81,6 +83,7 @@ namespace PDFA3
                                         using (TextReader txtXML = new StringReader(text))
                                         {
                                             FBWiFi_XMLBody result = (FBWiFi_XMLBody)serializer.Deserialize(txtXML);
+                                            objResult.Add(result);
                                         }
                                         break;
                                         //}
@@ -94,7 +97,7 @@ namespace PDFA3
                 }
                 reader.Close();
             }
-            return attachedFileBytes;
+            return objResult;
         }
     }
 }
